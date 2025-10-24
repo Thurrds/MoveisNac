@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Mim - MoveisNac</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container">
+            <a href="index.html" class="logo">Moveis<span>Nac</span></a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="sobre.html" class="active">Sobre Mim</a></li>
+                    <li><a href="login.html">Login / Cadastro</a></li>
+                    <li>
+                        <a href="carrinho.html" id="cart-link" aria-label="Ver carrinho de compras">
+                            <span>🛒</span>
+                            <span id="cart-count">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="about-page">
+        <div class="container about-container">
+            
+            <aside class="about-image">
+                <img src="https://via.placeholder.com/350x350?text=Sua+Foto+Aqui" alt="Foto de Arthur">
+            </aside>
+
+            <section class="about-content">
+                <h2>Olá, eu sou o Arthur!</h2>
+                <h3>Desenvolvedor Front-end & Fundador da MoveisNac</h3>
+                
+                <p>Bem-vindo ao meu projeto! Eu sou um estudante de desenvolvimento de software apaixonado por criar interfaces bonitas, intuitivas e funcionais.</p>
+                
+                <p>Este site, MoveisNac, é um projeto acadêmico (do segundo semestre!) focado em demonstrar minhas habilidades em HTML5, CSS3 moderno (com Flexbox e Grid) e JavaScript puro para criar uma experiência de e-commerce simulada.</p>
+                
+                <div class="about-contact">
+                    <p><span>Contato:</span> seu.email@exemplo.com</p>
+                    <p><span>Telefone:</span> (XX) 9XXXX-XXXX</p>
+                    <p><span>GitHub:</span> @seu-github</p>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 MoveisNac. Desenvolvido por Arthur.</p>
+    </footer>
+
+    <script src="cart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', atualizarContadorCarrinho);
+    </script>
+</body>
+</html>

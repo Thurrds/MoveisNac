@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoveisNac - Decore seu Lar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container">
+            <a href="index.html" class="logo">Moveis<span>Nac</span></a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="active">Início</a></li>
+                    <li><a href="sobre.html">Sobre Mim</a></li>
+                    <li><a href="login.html">Login / Cadastro</a></li>
+                    <li>
+                        <a href="carrinho.html" id="cart-link" aria-label="Ver carrinho de compras">
+                            <span>🛒</span>
+                            <span id="cart-count">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h2>O Conforto que sua Casa Merece</h2>
+                <p>Designs exclusivos e materiais de alta qualidade.</p>
+                <a href="#product-section" class="btn btn-secundario">Ver Produtos</a>
+            </div>
+        </section>
+
+        <section id="product-section" class="product-section container">
+            <h2>Nossos Produtos em Destaque</h2>
+            
+            <div id="product-grid" class="product-grid">
+                </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 MoveisNac. Desenvolvido por Arthur.</p>
+    </footer>
+
+    <script src="produtos.js"></script>
+    <script src="cart.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

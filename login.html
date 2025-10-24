@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Cadastro - MoveisNac</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container">
+            <a href="index.html" class="logo">Moveis<span>Nac</span></a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="sobre.html">Sobre Mim</a></li>
+                    <li><a href="login.html" class="active">Login / Cadastro</a></li>
+                    <li>
+                        <a href="carrinho.html" id="cart-link" aria-label="Ver carrinho de compras">
+                            <span>🛒</span>
+                            <span id="cart-count">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="auth-page">
+        <div class="auth-container">
+            <div class="auth-tabs">
+                <button id="tab-login" class="active" onclick="mostrarForm('login')">Login</button>
+                <button id="tab-cadastro" onclick="mostrarForm('cadastro')">Cadastro</button>
+            </div>
+
+            <div id="form-message" class="form-message"></div>
+
+            <form id="form-login" class="auth-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-senha">Senha</label>
+                    <input type="password" id="login-senha" required>
+                </div>
+                <button type="submit" class="btn btn-primario">Entrar</button>
+                <a class="form-link" onclick="mostrarForm('esqueci')">Esqueci minha senha</a>
+            </form>
+
+            <form id="form-cadastro" class="auth-form">
+                <div class="form-group">
+                    <label for="reg-nome">Nome Completo</label>
+                    <input type="text" id="reg-nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" required>
+                </div>
+                 <div class="form-group">
+                    <label for="reg-tel">Telefone (com DDD)</label>
+                    <input type="tel" id="reg-tel" placeholder="(11) 98765-4321">
+                </div>
+                <div class="form-group">
+                    <label for="reg-endereco">Endereço (Ex: Rua, N°, Bairro)</label>
+                    <input type="text" id="reg-endereco">
+                </div>
+                <div class="form-group">
+                    <label for="reg-senha">Senha</label>
+                    <input type="password" id="reg-senha" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-confirma-senha">Confirmar Senha</label>
+                    <input type="password" id="reg-confirma-senha" required>
+                </div>
+                <button type="submit" class="btn btn-primario">Criar Conta</button>
+            </form>
+
+            <form id="form-esqueci" class="auth-form">
+                <p>Insira seu email para recuperar a senha.</p>
+                <div class="form-group">
+                    <label for="esqueci-email">Email</label>
+                    <input type="email" id="esqueci-email" required>
+                </div>
+                <button type="submit" class="btn btn-primario">Recuperar</button>
+                <a class="form-link" onclick="mostrarForm('login')">Voltar para Login</a>
+            </form>
+
+        </div>
+    </main>
+    
+    <script src="cart.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', atualizarContadorCarrinho);
+    </script>
+</body>
+</html>

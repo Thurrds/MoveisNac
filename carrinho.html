@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho - MoveisNac</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container">
+            <a href="index.html" class="logo">Moveis<span>Nac</span></a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="sobre.html">Sobre Mim</a></li>
+                    <li><a href="login.html">Login / Cadastro</a></li>
+                    <li>
+                        <a href="carrinho.html" id="cart-link" class="active" aria-label="Ver carrinho de compras">
+                            <span>🛒</span>
+                            <span id="cart-count">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="cart-page container">
+        <h2>Seu Carrinho de Compras</h2>
+        
+        <div class="cart-container">
+            <div id="cart-items-list">
+                <p id="cart-empty-msg">Seu carrinho está vazio.</p>
+                </div>
+
+            <aside class="cart-summary">
+                <h3>Resumo do Pedido</h3>
+                <div class="cart-summary-total">
+                    <span>Subtotal:</span>
+                    <span id="cart-subtotal">R$ 0,00</span>
+                </div>
+                <button class="btn btn-secundario">Simular Checkout</button>
+            </aside>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 MoveisNac. Desenvolvido por Arthur.</p>
+    </footer>
+
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script>
+        // Script específico para a página do carrinho
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarItensCarrinho();
+            atualizarContadorCarrinho();
+        });
+    </script>
+</body>
+</html>
