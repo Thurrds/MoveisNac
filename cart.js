@@ -17,7 +17,6 @@ function getCarrinho() {
 function salvarCarrinho(carrinho) {
     localStorage.setItem('moveisNacCart', JSON.stringify(carrinho));
     atualizarContadorCarrinho();
-    // Atualiza o subtotal se estiver na página do carrinho
     if (document.getElementById('cart-subtotal')) {
         calcularSubtotal();
     }
@@ -42,36 +41,49 @@ function atualizarContadorCarrinho() {
  * @param {number} produtoId - O ID do produto a ser adicionado.
  */
 function adicionarAoCarrinho(produtoId) {
-    const carrinho = getCarrinho();
-    // Encontra o produto no nosso "banco de dados" de produtos
+    // A variável 'produtos' deve estar definida em 'produtos.js'
+    if (typeof produtos === 'undefined') {
+        console.error("A lista de produtos (produtos.js) não está carregada.");
+        return;
+    }
+    
     const produto = produtos.find(p => p.id === produtoId);
+    if (!produto) {
+        console.error("Produto não encontrado.");
+        return;
+    }
 
-    if (!produto) return;
-
+    const carrinho = getCarrinho();
     const itemExistente = carrinho.find(item => item.id === produtoId);
 
     if (itemExistente) {
         itemExistente.quantidade++;
     } else {
-        carrinho.push({ ...produto, quantidade: 1 });
+        carrinho.push({
+            id: produto.id,
+            nome: produto.nome,
+            preco: produto.preco,
+            imagem: produto.imagem, 
+            quantidade: 1
+        });
     }
 
     salvarCarrinho(carrinho);
-    // Feedback visual
-    alert(`${produto.nome} foi adicionado ao carrinho!`);
+    alert(`"${produto.nome}" adicionado ao carrinho!`);
 }
 
 /**
- * Remove um item do carrinho.
+ * Remove um item completamente do carrinho.
  * @param {number} produtoId - O ID do produto a ser removido.
  */
 function removerDoCarrinho(produtoId) {
     let carrinho = getCarrinho();
     carrinho = carrinho.filter(item => item.id !== produtoId);
     salvarCarrinho(carrinho);
-    
-    // Re-renderiza a lista de itens (só funciona na pág. do carrinho)
-    renderizarItensCarrinho();
+    // Se estiver na página do carrinho, renderiza novamente
+    if (document.getElementById('cart-items-list')) {
+        renderizarItensCarrinho();
+    }
 }
 
 /**
@@ -80,66 +92,68 @@ function removerDoCarrinho(produtoId) {
  * @param {number} novaQuantidade - A nova quantidade.
  */
 function alterarQuantidade(produtoId, novaQuantidade) {
+    let quantidade = parseInt(novaQuantidade);
+    if (isNaN(quantidade) || quantidade <= 0) {
+        removerDoCarrinho(produtoId);
+        return;
+    }
+    
     const carrinho = getCarrinho();
     const item = carrinho.find(item => item.id === produtoId);
-    novaQuantidade = Number(novaQuantidade);
-
+    
     if (item) {
-        if (novaQuantidade <= 0) {
-            // Se a quantidade for 0 ou menos, remove o item
-            removerDoCarrinho(produtoId);
-        } else {
-            item.quantidade = novaQuantidade;
-            salvarCarrinho(carrinho);
-        }
+        item.quantidade = quantidade;
+        salvarCarrinho(carrinho);
     }
 }
 
+// --- Funções de Renderização (para carrinho.html) ---
+
 /**
- * Renderiza os itens do carrinho na página carrinho.html.
+ * Renderiza a lista de itens na página do carrinho.
  */
 function renderizarItensCarrinho() {
     const container = document.getElementById('cart-items-list');
     const msgVazio = document.getElementById('cart-empty-msg');
     
-    // Verifica se estamos na página certa
-    if (!container) return; 
+    if (!container) return;
 
     const carrinho = getCarrinho();
+    container.innerHTML = ''; // Limpa o container
     
     if (carrinho.length === 0) {
-        msgVazio.style.display = 'block';
-        container.innerHTML = ''; // Limpa os itens antigos
-        container.appendChild(msgVazio); // Re-adiciona a msg
-    } else {
-        msgVazio.style.display = 'none';
-        container.innerHTML = ''; // Limpa (remove a msg de vazio)
-        
-        carrinho.forEach(item => {
-            const itemHTML = `
-                <div class="cart-item">
-                    <img src="${item.imagem}" alt="${item.nome}">
-                    <div class="cart-item-details">
-                        <h4>${item.nome}</h4>
-                        <p class="price">R$ ${item.preco.toFixed(2)}</p>
-                    </div>
-                    <div class="cart-item-actions">
-                        <input 
-                            type="number" 
-                            value="${item.quantidade}" 
-                            min="1"
-                            onchange="alterarQuantidade(${item.id}, this.value)"
-                            aria-label="Quantidade de ${item.nome}"
-                        >
-                        <button class="btn-remover" onclick="removerDoCarrinho(${item.id})" aria-label="Remover ${item.nome}">
-                            Remover
-                        </button>
-                    </div>
-                </div>
-            `;
-            container.innerHTML += itemHTML;
-        });
+        if (msgVazio) msgVazio.style.display = 'block';
+        calcularSubtotal(); // Para garantir que o total é R$ 0,00
+        return;
     }
+    
+    if (msgVazio) msgVazio.style.display = 'none';
+
+    carrinho.forEach(item => {
+        const itemHTML = `
+            <div class="cart-item">
+                <img src="${item.imagem}" alt="${item.nome}" class="cart-item-img">
+                <div class="cart-item-details">
+                    <h4>${item.nome}</h4>
+                    <p class="price">R$ ${item.preco.toFixed(2)}</p>
+                </div>
+                <div class="cart-item-actions">
+                    <input 
+                        type="number" 
+                        value="${item.quantidade}" 
+                        min="1"
+                        onchange="alterarQuantidade(${item.id}, this.value)"
+                        aria-label="Quantidade de ${item.nome}"
+                    >
+                    <button class="btn-remover" onclick="removerDoCarrinho(${item.id})" aria-label="Remover ${item.nome}">
+                        Remover
+                    </button>
+                </div>
+            </div>
+        `;
+        container.innerHTML += itemHTML;
+    });
+
     // Calcula o subtotal após renderizar
     calcularSubtotal();
 }

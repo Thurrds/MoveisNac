@@ -51,12 +51,11 @@
     </footer>
 
     <script src="js/products.js"></script>
-    <script src="js/cart.js"></script>
+    <script src="cart.js"></script>
     <script>
         // Script específico para a página do carrinho
-        document.addEventListener('DOMContentLoaded', () => {
-            renderizarItensCarrinho();
-            atualizarContadorCarrinho();
+        document.addEventListener('DOMContentLoaded', async () => { // CRÍTICO: ADICIONADO 'async'
+            await renderizarItensCarrinho(); // CRÍTICO: ADICIONADO 'await'
         });
     </script>
 </body>

@@ -1,145 +1,144 @@
-// auth.js
+alert("O ARQUIVO AUTH.JS FOI CARREGADO!");
 
-// Referências aos formulários e abas
-const formLogin = document.getElementById('form-login');
-const formCadastro = document.getElementById('form-cadastro');
-const formEsqueci = document.getElementById('form-esqueci');
+const API_BASE_URL = 'http://localhost:3000'; 
 
-const tabLogin = document.getElementById('tab-login');
-const tabCadastro = document.getElementById('tab-cadastro');
+// --- 1. TORNA A FUNÇÃO GLOBAL (Para funcionar com o onclick do HTML) ---
+window.mostrarForm = function(formId) {
+    console.log("Clicou na aba para mostrar:", formId); // Log para teste
 
-const formMessage = document.getElementById('form-message');
+    const formLogin = document.getElementById('form-login');
+    const formCadastro = document.getElementById('form-cadastro');
+    const formEsqueci = document.getElementById('form-esqueci');
+    const tabLogin = document.getElementById('tab-login');
+    const tabCadastro = document.getElementById('tab-cadastro');
+    const formMessage = document.getElementById('form-message');
 
-/**
- * Alterna a exibição dos formulários (Login, Cadastro, Esqueci).
- * @param {'login' | 'cadastro' | 'esqueci'} formId 
- */
-function mostrarForm(formId) {
-    // Esconde todos os formulários
-    formLogin.style.display = 'none';
-    formCadastro.style.display = 'none';
-    formEsqueci.style.display = 'none';
+    // Esconde tudo e remove classes ativas
+    if(formLogin) formLogin.style.display = 'none';
+    if(formCadastro) formCadastro.style.display = 'none';
+    if(formEsqueci) formEsqueci.style.display = 'none';
+    if(tabLogin) tabLogin.classList.remove('active');
+    if(tabCadastro) tabCadastro.classList.remove('active');
     
-    // Desativa todas as abas
-    tabLogin.classList.remove('active');
-    tabCadastro.classList.remove('active');
-    
-    // Limpa mensagens de erro
-    mostrarMensagem('', 'limpar');
+    // Limpa mensagens
+    if(formMessage) {
+        formMessage.textContent = '';
+        formMessage.className = 'form-message';
+    }
 
-    // Mostra o formulário e ativa a aba correspondente
+    // Lógica de exibição
     if (formId === 'login') {
-        formLogin.style.display = 'block';
-        tabLogin.classList.add('active');
+        if(formLogin) formLogin.style.display = 'block';
+        if(tabLogin) tabLogin.classList.add('active');
     } else if (formId === 'cadastro') {
-        formCadastro.style.display = 'block';
-        tabCadastro.classList.add('active');
+        if(formCadastro) formCadastro.style.display = 'block';
+        if(tabCadastro) tabCadastro.classList.add('active');
     } else if (formId === 'esqueci') {
-        formEsqueci.style.display = 'block';
-        // Mantém a aba de login ativa ou nenhuma
-        tabLogin.classList.add('active'); 
+        if(formEsqueci) formEsqueci.style.display = 'block';
+        if(tabLogin) tabLogin.classList.add('active'); 
     }
-}
+};
 
-/**
- * Exibe uma mensagem de feedback (erro ou sucesso) no topo do formulário.
- * @param {string} texto - A mensagem a ser exibida.
- * @param {'error' | 'success' | 'limpar'} tipo - O tipo da mensagem.
- */
+// --- 2. FUNÇÃO DE MENSAGEM ---
 function mostrarMensagem(texto, tipo) {
+    const formMessage = document.getElementById('form-message');
+    if (!formMessage) return;
+
     formMessage.textContent = texto;
-    formMessage.className = 'form-message'; // Reseta as classes
+    formMessage.className = 'form-message ' + (tipo || '');
+    formMessage.style.display = 'block';
+}
 
-    if (tipo === 'error') {
-        formMessage.classList.add('error');
-    } else if (tipo === 'success') {
-        formMessage.classList.add('success');
+// --- 3. EVENTOS DE FORMULÁRIO (Login e Cadastro) ---
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Auth.js carregado com sucesso!");
+
+    // Garante que iniciamos no login
+    window.mostrarForm('login');
+
+    const formLogin = document.getElementById('form-login');
+    const formCadastro = document.getElementById('form-cadastro');
+
+    // --- LOGIN ---
+    if (formLogin) {
+        formLogin.addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+            console.log("Botão de Entrar clicado!");
+            mostrarMensagem('Processando...', ''); 
+
+            const email = document.getElementById('login-email').value;
+            const senha = document.getElementById('login-senha').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, senha })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    mostrarMensagem('Login OK! Redirecionando...', 'success');
+                    localStorage.setItem('usuarioLogadoId', data.userId || '123');
+                    setTimeout(() => window.location.href = 'index.html', 1500);
+                } else {
+                    mostrarMensagem(data.mensagem || 'Erro no login.', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                mostrarMensagem('Erro de conexão com servidor.', 'error');
+            }
+        });
     }
-    // Se for 'limpar', ele só reseta (fica invisível)
-}
 
+    // --- CADASTRO ---
+    if (formCadastro) {
+        formCadastro.addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+            console.log("Botão de Criar Conta clicado!");
+            mostrarMensagem('Enviando dados...', '');
 
-// --- Lógica de Eventos (Listeners) ---
-// Adiciona os 'escutadores' apenas se os formulários existirem (estamos na pág. login.html)
-if (formLogin) {
-    
-    // --- SIMULAÇÃO DE LOGIN ---
-    formLogin.addEventListener('submit', (e) => {
-        e.preventDefault(); // Impede o envio real do formulário
-        mostrarMensagem('', 'limpar'); // Limpa erros anteriores
-        
-        const email = document.getElementById('login-email').value;
-        const senha = document.getElementById('login-senha').value;
+            // Pegando os valores com segurança
+            const getVal = (id) => document.getElementById(id) ? document.getElementById(id).value : '';
 
-        // SIMULAÇÃO: Aceita um usuário "admin"
-        if (email === 'arthur@moveisnac.com' && senha === '1234') {
-            mostrarMensagem('Login bem-sucedido! Redirecionando...', 'success');
-            
-            // Simula o redirecionamento após 2 segundos
-            setTimeout(() => {
-                window.location.href = 'index.html'; // Redireciona para a Home
-            }, 2000);
-        } else {
-            mostrarMensagem('Email ou senha inválidos. Tente (arthur@moveisnac.com / 1234)', 'error');
-        }
-    });
+            const nome = getVal('reg-nome');
+            const email = getVal('reg-email');
+            const telefone = getVal('reg-tel');
+            const endereco = getVal('reg-endereco');
+            const senha = getVal('reg-senha');
+            const confirmaSenha = getVal('reg-confirma-senha');
 
-    // --- VALIDAÇÃO E SIMULAÇÃO DE CADASTRO ---
-    formCadastro.addEventListener('submit', (e) => {
-        e.preventDefault();
-        mostrarMensagem('', 'limpar');
+            // Validações
+            if (!nome || !email || !senha || !confirmaSenha) {
+                mostrarMensagem('Preencha todos os campos obrigatórios (*)', 'error');
+                return;
+            }
+            if (senha !== confirmaSenha) {
+                mostrarMensagem('As senhas não coincidem.', 'error');
+                return;
+            }
 
-        // Pega os valores dos campos
-        const nome = document.getElementById('reg-nome').value;
-        const email = document.getElementById('reg-email').value;
-        const senha = document.getElementById('reg-senha').value;
-        const confirmaSenha = document.getElementById('reg-confirma-senha').value;
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/cadastro`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, email, telefone, endereco, senha, confirmaSenha })
+                });
+                const data = await response.json();
 
-        // 1. Validação de campos vazios
-        if (!nome || !email || !senha || !confirmaSenha) {
-            mostrarMensagem('Por favor, preencha todos os campos obrigatórios.', 'error');
-            return;
-        }
-
-        // 2. Validação de senhas
-        if (senha !== confirmaSenha) {
-            mostrarMensagem('As senhas não coincidem.', 'error');
-            return;
-        }
-        
-        // 3. Validação de força da senha (simples)
-        if (senha.length < 6) {
-            mostrarMensagem('A senha deve ter pelo menos 6 caracteres.', 'error');
-            return;
-        }
-
-        // 4. SUCESSO!
-        mostrarMensagem(`Cadastro de ${nome} realizado com sucesso! Você já pode fazer o login.`, 'success');
-        
-        // Simula o "sucesso" limpando o formulário e voltando ao login
-        setTimeout(() => {
-            formCadastro.reset(); // Limpa os campos
-            mostrarForm('login'); // Mostra o form de login
-            document.getElementById('login-email').value = email; // Preenche o email para facilitar
-        }, 3000);
-    });
-
-    // --- SIMULAÇÃO DE "ESQUECI SENHA" ---
-    formEsqueci.addEventListener('submit', (e) => {
-        e.preventDefault();
-        mostrarMensagem('', 'limpar');
-
-        const email = document.getElementById('esqueci-email').value;
-        if (!email) {
-            mostrarMensagem('Por favor, informe seu email.', 'error');
-            return;
-        }
-
-        // SIMULAÇÃO
-        mostrarMensagem(`(Simulado) Um email de recuperação foi enviado para ${email}.`, 'success');
-        
-        setTimeout(() => {
-            mostrarForm('login');
-        }, 3000);
-    });
-}
+                if (response.ok) {
+                    mostrarMensagem('Cadastro Sucesso! Faça login.', 'success');
+                    setTimeout(() => {
+                        window.mostrarForm('login');
+                        if(document.getElementById('login-email')) document.getElementById('login-email').value = email;
+                    }, 2000);
+                } else {
+                    mostrarMensagem(data.mensagem || 'Erro no cadastro.', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                mostrarMensagem('Erro: API offline ou inacessível.', 'error');
+            }
+        });
+    }
+});
